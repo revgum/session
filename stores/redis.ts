@@ -50,7 +50,11 @@ export default class RedisStore implements IStore {
     const session = await this.getSessionById(sessionId);
     session[sessionVariableKey] = sessionVariableValue;
 
-    await this._sessionRedisStore.set(sessionId, JSON.stringify(session));
+    await this._sessionRedisStore.setex(
+      sessionId,
+      this._ttl,
+      JSON.stringify(session),
+    );
   }
 
   public async deleteSession(sessionId: any): Promise<void> {
