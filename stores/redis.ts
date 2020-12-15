@@ -35,8 +35,11 @@ export default class RedisStore implements IStore {
   }
 
   public async createSession(sessionId: string): Promise<void> {
-    await this._sessionRedisStore.set(sessionId, JSON.stringify({}));
-    await this._sessionRedisStore.expire(sessionId, this._ttl);
+    await this._sessionRedisStore.setex(
+      sessionId,
+      this._ttl,
+      JSON.stringify({}),
+    );
   }
 
   public async setSessionVariable(
