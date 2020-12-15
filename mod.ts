@@ -6,8 +6,7 @@ import * as Oak from "./frameworks/oak.ts";
 import * as Attain from "./frameworks/attain.ts";
 import { Cookie } from "https://deno.land/std/http/cookie.ts";
 
-// deno-lint-ignore no-empty-interface
-export interface CookieOptions extends Omit<Cookie, "value" | "name"> {}
+export type CookieOptions = Omit<Cookie, "value" | "name">;
 
 const stores: any = {
   memory: Memory,
