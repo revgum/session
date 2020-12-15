@@ -17,6 +17,7 @@ interface ISessionOptions {
   store?: string;
   hostname?: string;
   port?: number;
+  ttl?: number;
 }
 
 export class Session {

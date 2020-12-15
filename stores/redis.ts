@@ -35,10 +35,10 @@ export default class RedisStore implements IStore {
   }
 
   public async createSession(sessionId: string): Promise<void> {
-    await this._sessionRedisStore.setex(
+    await this._sessionRedisStore.set(
       sessionId,
-      this._ttl,
       JSON.stringify({}),
+      { ex: this._ttl },
     );
   }
 
@@ -50,10 +50,10 @@ export default class RedisStore implements IStore {
     const session = await this.getSessionById(sessionId);
     session[sessionVariableKey] = sessionVariableValue;
 
-    await this._sessionRedisStore.setex(
+    await this._sessionRedisStore.set(
       sessionId,
-      this._ttl,
       JSON.stringify(session),
+      { ex: this._ttl },
     );
   }
 
