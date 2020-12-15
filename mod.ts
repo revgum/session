@@ -5,6 +5,9 @@ import * as Interface from "./stores/interface.ts"
 import * as Oak from "./frameworks/oak.ts"
 import * as Attain from "./frameworks/attain.ts"
 
+// deno-lint-ignore no-empty-interface
+export interface CookieOptions extends Omit<Cookie, "value" | "name"> {}
+
 const stores: any = {
 	memory: Memory,
 	redis: Redis,

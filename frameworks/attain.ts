@@ -1,13 +1,10 @@
-import { SessionData } from "../mod.ts";
+import { CookieOptions, SessionData } from "../mod.ts";
+import { Request, Response } from "https://deno.land/x/attain/mod.ts";
 import {
 	Request,
 	Response
 } from "https://deno.land/x/attain/mod.ts";
 import { Cookie, setCookie, getCookies } from "https://deno.land/std/http/cookie.ts";
-
-interface CookieOptions extends Omit<Cookie, "value" | "name"> {
-
-}
 
 export default function use(session: any, options?: CookieOptions) {
 	return async (req: Request, res: Response) => {
