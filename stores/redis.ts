@@ -5,10 +5,14 @@ export default class RedisStore implements IStore {
   private _sessionRedisStore: any;
   private _hostname: string;
   private _port: number;
+  private _ttl = 5;
 
   constructor(options: any) {
     this._hostname = options.hostname;
     this._port = options.port;
+    if (options.ttl) {
+      this._ttl += options.ttl;
+    }
   }
 
   public async init() {
@@ -32,6 +36,7 @@ export default class RedisStore implements IStore {
 
   public async createSession(sessionId: string): Promise<void> {
     await this._sessionRedisStore.set(sessionId, JSON.stringify({}));
+    await this._sessionRedisStore.expire(sessionId, this._ttl);
   }
 
   public async setSessionVariable(
