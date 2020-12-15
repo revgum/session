@@ -3,7 +3,6 @@ import * as Memory from "./stores/memory.ts";
 import * as Redis from "./stores/redis.ts";
 import * as Interface from "./stores/interface.ts";
 import * as Oak from "./frameworks/oak.ts";
-import * as Attain from "./frameworks/attain.ts";
 import { Cookie } from "https://deno.land/std/http/cookie.ts";
 
 export type CookieOptions = Omit<Cookie, "value" | "name">;
@@ -16,7 +15,6 @@ const stores: any = {
 
 const frameworks: any = {
   oak: Oak,
-  attain: Attain,
 };
 
 interface ISessionOptions {
