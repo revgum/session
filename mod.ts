@@ -1,16 +1,11 @@
-import { v4 } from "https://deno.land/std/uuid/mod.ts";
+import { v4 } from "./deps.ts";
 import * as Memory from "./stores/memory.ts";
 import * as Redis from "./stores/redis.ts";
-import * as Interface from "./stores/interface.ts";
 import * as Oak from "./frameworks/oak.ts";
-import { Cookie } from "https://deno.land/std/http/cookie.ts";
-
-export type CookieOptions = Omit<Cookie, "value" | "name">;
 
 const stores: any = {
   memory: Memory,
   redis: Redis,
-  interface: Interface,
 };
 
 const frameworks: any = {

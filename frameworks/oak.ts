@@ -1,4 +1,7 @@
-import { CookieOptions, SessionData } from "../mod.ts";
+import type { Cookie } from "../deps.ts";
+import { SessionData } from "../mod.ts";
+
+type CookieOptions = Omit<Cookie, "value" | "name">;
 
 export default function use(session: any, options: CookieOptions = {}) {
   return async (context: any, next: any) => {
