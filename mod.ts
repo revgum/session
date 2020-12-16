@@ -25,8 +25,8 @@ export interface ISessionOptions {
 }
 
 export class Session {
-  private _frameworkLib?: Frameworks;
-  private _storeLib?: StoreLibs;
+  private _frameworkLib: Frameworks;
+  private _storeLib: StoreLibs;
   private _options: ISessionOptions;
   public _store?: Stores;
 
@@ -35,17 +35,13 @@ export class Session {
       framework: "oak",
       store: "memory",
     };
-    if (!options?.store) {
-      this._options.store = "memory";
-    }
+    this._frameworkLib = frameworks[this._options.framework];
+    this._storeLib = stores[this._options.store];
   }
 
   public async init() {
-    this._storeLib = stores[this._options.store];
     this._store = new this._storeLib(this._options);
     await this._store.init();
-
-    this._frameworkLib = frameworks[this._options.framework];
   }
 
   public use() {
