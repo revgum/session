@@ -8,12 +8,12 @@ export default class RedisStore implements IStore {
   private _sessionRedisStore: any;
   private _hostname = "localhost";
   private _port = 6379;
-  private _ttl = 5;
+  private _ttl?: number;
 
   constructor(options: RedisStoreOptions) {
     if (options.hostname) this._hostname = options.hostname;
     if (options.port) this._port = options.port;
-    if (options.ttl) this._ttl += options.ttl;
+    if (options.ttl) this._ttl = options.ttl;
   }
 
   public async init() {
@@ -39,7 +39,7 @@ export default class RedisStore implements IStore {
     await this._sessionRedisStore.set(
       sessionId,
       JSON.stringify({}),
-      { ex: this._ttl },
+      this._ttl ? { ex: this._ttl } : {},
     );
   }
 
@@ -54,7 +54,7 @@ export default class RedisStore implements IStore {
     await this._sessionRedisStore.set(
       sessionId,
       JSON.stringify(session),
-      { ex: this._ttl },
+      this._ttl ? { ex: this._ttl } : {},
     );
   }
 
