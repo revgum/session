@@ -1,47 +1,51 @@
 import { v4 } from "./deps.ts";
-import * as Memory from "./stores/memory.ts";
-import * as Redis from "./stores/redis.ts";
-import * as Oak from "./frameworks/oak.ts";
+import Memory from "./stores/memory.ts";
+import Redis from "./stores/redis.ts";
+import Oak from "./frameworks/oak.ts";
 
-const stores: any = {
-  memory: Memory,
-  redis: Redis,
+type StoreLibs = typeof Memory | typeof Redis;
+type Stores = Memory | Redis;
+type Frameworks = typeof Oak;
+
+const stores: { [key: string]: StoreLibs } = {
+  "memory": Memory,
+  "redis": Redis,
 };
 
-const frameworks: any = {
-  oak: Oak,
+const frameworks: { [key: string]: Frameworks } = {
+  "oak": Oak,
 };
 
-interface ISessionOptions {
+export interface ISessionOptions {
   framework: string;
-  store?: string;
+  store: string;
   hostname?: string;
   port?: number;
   ttl?: number;
 }
 
 export class Session {
-  private _frameworkLib: any;
-  private _storeLib: any;
-  private _options: any;
-  public _store: any;
+  private _frameworkLib?: Frameworks;
+  private _storeLib?: StoreLibs;
+  private _options: ISessionOptions;
+  public _store?: Stores;
 
   constructor(options?: ISessionOptions) {
-    this._options = options;
-
-    if (this._options.store === undefined) {
+    this._options = options ?? {
+      framework: "oak",
+      store: "memory",
+    };
+    if (!options?.store) {
       this._options.store = "memory";
     }
   }
 
   public async init() {
     this._storeLib = stores[this._options.store];
-    this._storeLib = this._storeLib.default;
     this._store = new this._storeLib(this._options);
     await this._store.init();
 
     this._frameworkLib = frameworks[this._options.framework];
-    this._frameworkLib = this._frameworkLib.default;
   }
 
   public use() {
@@ -50,9 +54,11 @@ export class Session {
 }
 
 export class SessionData {
+  // deno-lint-ignore no-explicit-any
   private _session: any;
-  public sessionId: any;
+  public sessionId: string;
 
+  // deno-lint-ignore no-explicit-any
   constructor(session: any, sessionId?: string) {
     this._session = session;
     if (sessionId) {
@@ -68,6 +74,7 @@ export class SessionData {
     }
   }
 
+  // deno-lint-ignore no-explicit-any
   public async get(sessionVariableKey: string): Promise<any> {
     let sessionData = await this._session._store.getSessionById(this.sessionId);
     sessionData = sessionData[sessionVariableKey];
