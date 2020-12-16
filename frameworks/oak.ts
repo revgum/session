@@ -1,10 +1,19 @@
-import type { Cookie } from "../deps.ts";
+import type {
+  Context,
+  CookiesSetDeleteOptions,
+  RouterContext,
+} from "../deps.ts";
 import { SessionData } from "../mod.ts";
 
-type CookieOptions = Omit<Cookie, "value" | "name">;
-
-export default function use(session: any, options: CookieOptions = {}) {
-  return async (context: any, next: any) => {
+export default function use(
+  // deno-lint-ignore no-explicit-any
+  session: any,
+  options: CookiesSetDeleteOptions = {},
+) {
+  return async (
+    context: Context | RouterContext,
+    next: () => Promise<void>,
+  ) => {
     const sid = context.cookies.get("sid");
 
     if (sid === undefined) {

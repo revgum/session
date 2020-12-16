@@ -1,14 +1,19 @@
+// deno-lint-ignore-file
 import { IStore } from "./interface.ts";
 import { connect } from "../deps.ts";
+import { ISessionOptions } from "../mod.ts";
 
+type RedisStoreOptions = Omit<ISessionOptions, "framework" | "store">;
 export default class RedisStore implements IStore {
   private _sessionRedisStore: any;
-  private _hostname: string;
-  private _port: number;
+  private _hostname = "localhost";
+  private _port = 6379;
+  private _ttl?: number;
 
-  constructor(options: any) {
-    this._hostname = options.hostname;
-    this._port = options.port;
+  constructor(options: RedisStoreOptions) {
+    if (options.hostname) this._hostname = options.hostname;
+    if (options.port) this._port = options.port;
+    if (options.ttl) this._ttl = options.ttl;
   }
 
   public async init() {
@@ -31,21 +36,29 @@ export default class RedisStore implements IStore {
   }
 
   public async createSession(sessionId: string): Promise<void> {
-    await this._sessionRedisStore.set(sessionId, JSON.stringify({}));
+    await this._sessionRedisStore.set(
+      sessionId,
+      JSON.stringify({}),
+      this._ttl ? { ex: this._ttl } : {},
+    );
   }
 
   public async setSessionVariable(
-    sessionId: any,
+    sessionId: string,
     sessionVariableKey: any,
     sessionVariableValue: any,
   ): Promise<void> {
     const session = await this.getSessionById(sessionId);
     session[sessionVariableKey] = sessionVariableValue;
 
-    await this._sessionRedisStore.set(sessionId, JSON.stringify(session));
+    await this._sessionRedisStore.set(
+      sessionId,
+      JSON.stringify(session),
+      this._ttl ? { ex: this._ttl } : {},
+    );
   }
 
-  public async deleteSession(sessionId: any): Promise<void> {
+  public async deleteSession(sessionId: string): Promise<void> {
     await this._sessionRedisStore.set(sessionId, null);
   }
 }
